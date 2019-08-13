@@ -1,0 +1,242 @@
+location = 'pollen.jpg';%'blpf.bmp';{
+
+img = imread(location);
+image(img)
+colormap(gray(256));
+axis image
+
+m = mean(img(:));
+numberOfElements = numel(img);
+ximg = double(img);
+t = 0
+for i=1:500
+    for k=1:500
+        t = t + ximg(i,k);
+    end
+end
+t;
+t = t / numberOfElements;
+x = local_histeq_stats(img,3,3,1)
+image(x)
+colormap(gray(265));
+axis image
+%{
+%question 1b
+x = imread(location);
+image(x);
+colormap(gray(265));
+axis image
+imhist(x);
+
+for i=1:500
+    for k=1:500
+        if x(i,k) <100
+            x(i,k)= x(i,k)+50;
+        end
+    end
+end
+
+image(x);
+colormap(gray(265));
+axis image
+imhist(x);
+%}
+
+%{
+%Fourier transform
+x = imread(location);
+image(x)
+colormap(gray(256))
+axis image
+ 
+xx = abs(fft2(x));
+image(xx)
+colormap(gray(256))
+axis image
+
+xxx = abs(fftshift(fft2(x)));
+image(xxx)
+colormap(gray(256))
+axis image
+
+mxy = max(max(log(1+double(xxx))));
+c = 255/mxy;
+xxxx = c*log(1+abs(double(xxx)));
+image(xxxx)
+colormap(gray(256))
+axis image
+
+surf(x), shading flat;
+surf(xx), shading flat;
+surf(xxx), shading flat;
+surf(xxxx), shading flat;
+%}
+
+%{
+%inverse log function
+x = double(imread(location));
+%xx = imread(location);
+mxy = max(max(log(1+x)));
+xx = 255/mxy;
+h = log_Transform(location,xx);
+imhist(uint8(h));
+imhist(uint8(x));
+image(x)
+colormap(gray(256))
+axis image
+image(h)
+colormap(gray(256))
+axis image
+%}
+
+%{
+%local histogram
+x = imread(location);
+xx = double(x)
+image(x)
+colormap(gray(256))
+axis image
+
+
+newX = local_histeq(x,3,3);
+image(newX)
+colormap(gray(256))
+axis image
+
+newX = local_histeq(x,7,7);
+image(newX)
+colormap(gray(256))
+axis image
+
+newX = local_histeq(x,9,9);
+image(newX)
+colormap(gray(256))
+axis image
+%}
+%{
+o = imread(location);
+og = double(o);
+imhist(o);
+i=histeq(i);
+imhist(i);
+p = global_histeq(location);
+imhist(p);
+image(o)
+colormap(gray(256))
+axis image
+%}
+%{
+%global histogram test
+img = imread(location);
+newImg = global_histeq(location);
+
+imhist(uint8(img));
+imhist(uint8(newImg))
+image(img) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+image(uint8(newImg)) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+good = histeq(img);
+image(good) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+%}
+
+% figure; imshow(img);
+% [M,N]= size(img);
+% 
+% H=imhist(img);
+% H=H/(M*N);
+% figure; bar(H);
+% C=zeros(256,1);
+% %compute the mapping
+% for k=1:256
+%     C(k)=uint8(sum(H(1:k))*255);
+% end
+% 
+% figure;plot(C);
+% [Y,R] =histeq(img,256);
+% figure;plot(T);
+% hold on
+% plot(R)
+% %perform mapping
+% histeqimg = C(double(img)+1);
+% figure;
+% image(histeqimg)
+% colormap(gray(256))
+% axis image
+% for k=1:256
+%     T(k)=uint8(sum(H(1:k))*255);
+% end
+% 
+% imhist(uint8( histeqimg))
+% 
+% T=T*255;
+% imhist(Y);
+%{
+%log transformations
+x = double(imread(location));
+%xx = imread(location);
+mxy = max(max(log(1+x)));
+xx = 255/mxy;
+h = log_Transform(location,xx);
+image(x)
+colormap(gray(256))
+axis image
+
+image(h)
+colormap(gray(256))
+axis image
+xx = uint8(x);
+imhist(xx)
+imhist(uint8(h))%}
+
+%Gamma correction
+o = imread(location);
+og = double(o);
+image(og)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+%lower the gamma
+pollenl1 = gammaCorrection(location,0.67);
+image(pollenl1) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+pollenl2 = gammaCorrection(location,0.2);
+image(pollenl2) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+pollenl3 = gammaCorrection(location,0.04);
+image(pollenl3) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+%higher gamma
+pollenh1 = gammaCorrection(location,2.5);
+image(pollenh1) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+pollenh2 = gammaCorrection(location,5);
+image(pollenh2) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+pollenh3 = gammaCorrection(location,25);
+image(pollenh3) %scales the image to your display range (0-255)
+colormap( gray (256)) %sets colours to grey
+axis image
+
+%saving the images
+imwrite(pollenl1, gray(256), 'pollenl1.jpg','jpg')
+imwrite(pollenl2, gray(256), 'pollenl2.jpg','jpg')
+imwrite(pollenl3, gray(256), 'pollenl3.jpg','jpg')
+imwrite(pollenh1, gray(256), 'pollenh1.jpg','jpg')
+imwrite(pollenh2, gray(256), 'pollenh2.jpg','jpg')
+imwrite(pollenh3, gray(256), 'pollenh3.jpg','jpg')
+%}
